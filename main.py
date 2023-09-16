@@ -17,7 +17,7 @@ maze, facing_direction = mazeMapping.mazeMap()
 
 #This is Part 2 of Finding the Shortest Path using A*(A star) algorithm
 start = (0, 0)
-goal = (2, 2)  # This now directly represents the goal location in the maze
+goal = (1, 1)  # This now directly represents the goal location in the maze
 
 #This is a maze solving Algorithm Called A*star, uses the functions defined in the astar.py
 path = astar.a_star_search(maze, start, goal)

@@ -16,8 +16,8 @@ import astar
 # value 0 -> Explored
 # value -1 -> Unexplored and accessible (not an obstacle -> Opening)
 # value -2 -> Obstacle
-rows = 3
-cols = 3
+rows = 2
+cols = 2
 maze = [[-1 for _ in range(rows)] for _ in range(cols)]
 #This Variable indicates the direction in which the robot faces, useful in helping the robot to determine the next move
 facing_direction="up"
