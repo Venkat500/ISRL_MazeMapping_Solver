@@ -1,32 +1,36 @@
 """e-puck_maze-solver controller."""
 
-# Needed classes - Controller module
+# Needed libraries - Controller module
 from controller import Robot, DistanceSensor, Motor
 from controller import Supervisor
 from controller import Node
 
-# create the Robot instance.
+# creates the Robot instance.
 robot = Robot()
+# Uses the Supervisor API
 supervisor = Supervisor()
 robotSuper = supervisor.getFromDef("robot")
 
+# Distance Sensors declaration
 obstacle_sensor_right = robot.getDevice("ds_right")
 obstacle_sensor_left = robot.getDevice("ds_left")
 obstacle_sensor_front = robot.getDevice("ds_front")
 
+# Actuators declaration
 left_motor = robot.getDevice("left wheel motor")
 right_motor = robot.getDevice("right wheel motor")
 
+# Robot's timestep value (for the main while loops)
 timestep = int(robot.getBasicTimeStep())
 
-# Needed to provide movements positions:
+# Global values needed to provide movements positions across iterations.
 start_cell_global = (0,0)
 target_cell_global = (0,0)
 target_position = 0
 
 
 
-# ASTAR ALGORITHM
+# ASTAR ALGORITHM Implementation
 
 class SimplePriorityQueue:
     def __init__(self):
@@ -85,12 +89,10 @@ def reconstruct_path(came_from, start, goal):
     path.reverse()
 
     return path
-    
 
 
 
-
-# MOVE
+# MOVEMENT factors with the simulation environment.
 
 #Check Front Sensor:
 def check_front_sensor():
@@ -104,12 +106,14 @@ def check_right_sensor():
 def check_left_sensor():
     return True if obstacle_sensor_left.getValue() < 1000 else False
 
-# Support variables for turning around
+# Support variables for turning around - global across iterations.
 isTurning = False
 target_rotation = 0
 
 
-
+# Rotates 90 degrees right --- adjustments to make sure the robot turns exactly that
+# Robot will turn slowly to make sure it won't skip the target rotation quote.
+# Uses the supervisor to check the robot's rotation values.
 def turn_right():
     global target_rotation
     
@@ -156,7 +160,9 @@ def turn_right():
     print("RIGHT ROT TARGET" , target_rotation)
             
             
-            
+# Rotates 90 degrees left --- adjustments to make sure the robot turns exactly that
+# Robot will turn slowly to make sure it won't skip the target rotation quote.
+# Uses the supervisor to check the robot's rotation values.
 def turn_left():
     global target_rotation
         
@@ -202,7 +208,9 @@ def turn_left():
     print("LEFT ROT TARGET" , target_rotation)
 
 
-
+# Rotates 180 degrees --- adjustments to make sure the robot turns exactly that
+# Robot will turn slowly to make sure it won't skip the target rotation quote.
+# Uses the supervisor to check the robot's rotation values.
 def turn_around():
     global target_rotation
     
@@ -230,7 +238,7 @@ def turn_around():
     print("AROUND ROT TARGET" , target_rotation)
 
 
-#Driving Right
+#Driving Right - Supervisor robot location values
 def right(facing_direction):
     global start_cell_global
     global target_cell_global
@@ -268,7 +276,7 @@ def right(facing_direction):
     
 
 
-#Driving Left
+#Driving Left - Supervisor robot location values
 def left(facing_direction):
     global start_cell_global
     global target_cell_global
@@ -306,7 +314,7 @@ def left(facing_direction):
 
 
 
-#Driving UP
+#Driving Up - Supervisor robot location values
 def up(facing_direction):
     global start_cell_global
     global target_cell_global
@@ -352,7 +360,7 @@ def up(facing_direction):
 
 hasRotated = False
 
-#Driving Down
+#Driving Down - Supervisor robot location values
 def down(facing_direction):
     global start_cell_global
     global target_cell_global
@@ -397,24 +405,25 @@ def down(facing_direction):
     return "down"
     
     
-   
-
-# MAZE MAPPING
-
-
+# MAZE MAPPING ALGORITHM implementation -- DFS Based.
 def within_bounds(x, y, rows, cols):
     return 0 <= x < cols and 0 <= y < rows
 
 # value 0 -> Explored
 # value -1 -> Unexplored and accessible (not an obstacle -> Opening)
 # value -2 -> Obstacle
+
+# Maze specifics :
 rows = 4
 cols = 4
 maze = [[-1 for _ in range(rows)] for _ in range(cols)]
-#This Variable indicates the direction in which the robot faces, useful in helping the robot to determine the next move
+
+#This Variable indicates the direction in which the robot faces, 
+# useful in helping the robot to determine the next move
 facing_direction="up"
 target_chosen=False
 
+# Main method to determine where the robot needs to go next and actualize it.
 def move_robot(current_cell, target_cell):
     global facing_direction
     global target_chosen
@@ -443,7 +452,6 @@ def move_robot(current_cell, target_cell):
         facing_direction = down(facing_direction)
     else:
         print("X axis on same level")
-    # wait(4000)
 
     if current_cell[1] > target_cell[1]:
         print(" Moving LEFT")
@@ -526,7 +534,8 @@ def check_sensors(x, y):
         print(row)
     print('=================================================================')
 
-
+# Utility maze mapping methods, to determine whether the cell has been visited already
+# or not!
 def checkCell(x, y):
     if x < 0 or x > rows - 1 or y < 0 or y > cols - 1:
         return False
@@ -548,8 +557,6 @@ def check_neighbors(x, y):
     
     check_sensors(x, y)
 
-    # For backtracking, it'll happend the cell itself after each neighbor,
-    # except the last one which will be explored up first -> pop
     if (facing_direction == "up"):
         if checkCell(x, y - 1) and not visited(x, y - 1) and within_bounds(x, y - 1, rows, cols): 
             neighbors.append((x, y - 1)) # Right
@@ -638,7 +645,7 @@ def adjacencyCheck(start_point, end_point):
     else:
         return True
 
-
+# Contains the main loop -> Syncronizes controller and sensors' values with each tick.
 def mazeMap():
     global start_cell_global
     global target_cell_global
@@ -714,7 +721,7 @@ def mazeMap():
     return maze, facing_direction
 
 
-
+# Contains the other main loop -> Syncronizes controller and sensors' values with each tick.
 def traceFinalPath(path):
     global start_cell_global
     global target_cell_global
@@ -742,7 +749,6 @@ def traceFinalPath(path):
     
  
 # -- MAIN LOGIC --
-
 if __name__ == "__main__":
     obstacle_sensor_right.enable(timestep)
     obstacle_sensor_left.enable(timestep)
@@ -767,10 +773,7 @@ if __name__ == "__main__":
     #This is a maze solving Algorithm Called A*star, uses the functions defined in the astar.py
     path = a_star_search(maze, start, goal)
     print("Answer :", path)
-    
-    #This Variable indicates the direction in which the robot faces, useful in helping the robot to determine the next move
-    # facing_direction="up"
-    
+
     for i in maze:
         print(i)    
     
