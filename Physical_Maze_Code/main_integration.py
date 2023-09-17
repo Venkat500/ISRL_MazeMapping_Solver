@@ -15,7 +15,7 @@ import move_integration
 
 #This is used to mape the maze 
 import mazeMapping_integration
-
+import Direction
 
 # This is Part 1 of Maze Mapping: the Maze Generator algorithm
 # through a DSF pre-order approach.
@@ -31,7 +31,7 @@ goal = (1, 1)  # This now directly represents the goal location in the maze
 #This is a maze solving Algorithm Called A*star, uses the functions defined in the astar.py
 path = astar.a_star_search(maze, start, goal)
 print("Answer :", path)
-
+Direction.calculate_direction(path)
 #This Variable indicates the direction in which the robot faces, useful in helping the robot to determine the next move
 # facing_direction="up"
 
