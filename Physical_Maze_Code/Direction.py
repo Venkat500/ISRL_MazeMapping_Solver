@@ -1,3 +1,6 @@
+import pickle
+import socket
+
 def calculate_direction(path):
     direction=[]
     print("Path Received: ", path)
@@ -14,12 +17,24 @@ def calculate_direction(path):
             print("Go UP")
             direction.append("up")
         elif (path[i][1] < path[i+1][1]):
-            print("Go left")
-            direction.append("left")
-        elif (path[i][1] > path[i+1][1]):
             print("Go right")
             direction.append("right")
+        elif (path[i][1] > path[i+1][1]):
+            print("Go left")
+            direction.append("left")
     print("=========================================")
     print("Calculated Direction :", direction)
     print("=========================================")
+
+    # Send the processed directions to the server
+    bind_ip = "0.0.0.0"
+    bind_port = 27700
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((bind_ip, bind_port))
+
+    serialized_data = pickle.dumps(direction)
+    sock.sendall(serialized_data)
+
+    sock.close()
 

@@ -152,11 +152,11 @@ def down(facing_direction):
 def move_forward():
     robot.reset()
     gyro.reset_angle(0)
-    while robot.distance() <= 60:
+    while robot.distance() <= 55:
         # Here the Correction Formula = Error * Kp 
         # Kp means "Gyro Straight Proportional Constant" indicated how aggresively do you want the robot to go back to the straight line
         # 1 means it will be a smootht correction
         # 3 means it will correct and turn abruptly
         correction = (0 - gyro.angle()) * 1
-        robot.drive(60, correction)
+        robot.drive(55, correction)
     # robot.stop()
