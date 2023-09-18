@@ -50,9 +50,9 @@ Direction.calculate_direction(path)
 
 
 
-# Invoke the client function to process the path data and send it back
-path = [(0,0), (0,1), (1,1)]
-Direction.calculate_direction(path)
+# # Invoke the client function to process the path data and send it back
+# path = [(0,0), (0,1), (1,1)]
+# Direction.calculate_direction(path)
 
 # Now, the server waits for the processed data from the client
 connection, client_address = sock.accept()
@@ -72,7 +72,7 @@ print("\n\n =========== Generated Maze ============")
 for i in maze:
     print(i)    
 
-facing_direction = "up"
+# facing_direction = "up"
 print("=========== Finalized Directions ===============")
 print ("Directions : ", received_data)
 print("================================================")

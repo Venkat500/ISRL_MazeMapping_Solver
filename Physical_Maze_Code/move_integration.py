@@ -32,15 +32,15 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=104)
 
 #Check Front Sensor:
 def check_front_sensor():
-    return True if obstacle_sensor_front.distance() < 100 else False
+    return True if obstacle_sensor_front.distance() < 150 else False
 
 #Check Right Sensor:
 def check_right_sensor():
-    return True if obstacle_sensor_right.distance() < 100 else False
+    return True if obstacle_sensor_right.distance() < 150 else False
 
 #Check Left Sensor:
 def check_left_sensor():
-    return True if obstacle_sensor_left.distance() < 100 else False
+    return True if obstacle_sensor_left.distance() < 150 else False
 
 #This is tuned witht the gyroscope
 def turn_right():
@@ -152,11 +152,11 @@ def down(facing_direction):
 def move_forward():
     robot.reset()
     gyro.reset_angle(0)
-    while robot.distance() <= 55:
+    while robot.distance() <= 90:
         # Here the Correction Formula = Error * Kp 
         # Kp means "Gyro Straight Proportional Constant" indicated how aggresively do you want the robot to go back to the straight line
         # 1 means it will be a smootht correction
         # 3 means it will correct and turn abruptly
         correction = (0 - gyro.angle()) * 1
-        robot.drive(55, correction)
+        robot.drive(90, correction)
     # robot.stop()
